@@ -3,16 +3,14 @@
 namespace Nielsiano\DmplBuilder\Tests;
 
 use Nielsiano\DmplBuilder\DmplBuilder;
+use PHPUnit\Framework\TestCase;
 
-class DmplBuilderTest extends \PHPUnit_Framework_TestCase
+class DmplBuilderTest extends TestCase
 {
 
-    /**
-     * @var DmplBuilder
-     */
-    protected $builder;
+    protected DmplBuilder $builder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->builder = new DmplBuilder;
     }
@@ -69,6 +67,37 @@ class DmplBuilderTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(';: ECM,U H L0,A100,100,R,-1000,5000,e', $this->builder->compile());
     }
 
+    public function test_it_can_add_a_circle()
+    {
+        $this->builder->circle(600, 700, 800);
+        $this->assertEquals(';: ECM,U H L0,A100,100,R,CC 600,700,800,e', $this->builder->compile());
+    }
+
+    public function test_it_can_add_an_arc()
+    {
+        $this->builder->arc(400, 500, 600);
+        $this->assertEquals(';: ECM,U H L0,A100,100,R,CA 400,500,600,e', $this->builder->compile());
+    }
+
+    public function test_it_can_add_an_ellipse()
+    {
+        $this->builder->ellipse(400, 500, 600, 700, 800, 900);
+        $this->assertEquals(';: ECM,U H L0,A100,100,R,CE 400,500,600,700,800,900,e', $this->builder->compile());
+    }
+
+    public function test_it_can_add_a_general_curve()
+    {
+        $this->builder->curve(10, 20, 30, 40, 50, 60, 70, 80, 90, 100);
+        $this->assertEquals(';: ECM,U H L0,A100,100,R,CG 10,20,30,40,50,60,70,80,90,100,e', $this->builder->compile());
+    }
+
+    public function test_it_can_add_a_general_curve_with_flipped_axes()
+    {
+        $this->builder->flipAxes();
+        $this->builder->curve(10, 20, 30, 40, 50, 60, 70, 80, 90, 100);
+        $this->assertEquals(';: ECM,U H L0,A100,100,R,CG 20,10,40,30,60,50,80,70,100,90,e', $this->builder->compile());
+    }
+
     public function test_it_can_push_a_generic_command()
     {
         $this->builder->pushCommand('V10;');
@@ -97,10 +126,11 @@ class DmplBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder->changePen(3);
         $this->assertEquals(';: ECM,U H L0,A100,100,R,P3;,e', $this->builder->compile());
     }
-    
+
     public function test_it_will_throw_exception_when_invalid_pen_is_chosen()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, '[1984] is not a valid Pen.');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('[1984] is not a valid Pen.');
         $this->builder->changePen(1984);
     }
 
@@ -112,7 +142,8 @@ class DmplBuilderTest extends \PHPUnit_Framework_TestCase
 
     public function test_it_will_throw_exception_when_invalid_measuring_unit_is_chosen()
     {
-        $this->setExpectedException(\InvalidArgumentException::class, '[9] is not a valid measuring unit.');
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('[9] is not a valid measuring unit.');
         $this->builder->setMeasuringUnit(9);
     }
 
