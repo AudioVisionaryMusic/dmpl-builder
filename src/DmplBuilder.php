@@ -21,25 +21,12 @@ class DmplBuilder implements PlotBuilder
 
     /**
      * Generated DM/PL command instructions.
-     *
-     * @var array
      */
-    protected $instructions = [];
+    protected array $instructions = [];
 
-    /**
-     * @var bool
-     */
-    protected $cutOff = false;
-
-    /**
-     * @var bool
-     */
-    protected $flipAxes = false;
-
-    /**
-     * @var mixed
-     */
-    protected $measuringUnit = 'M';
+    protected bool $cutOff = false;
+    protected bool $flipAxes = false;
+    protected string $measuringUnit = 'M';
 
     const KISS_CUT = 50;
     const FLEXCUT_PEN = 6;
