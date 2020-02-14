@@ -41,7 +41,7 @@ class SvgBuilder implements PlotBuilder
     {
 
         if ($this->axesFlipped) {
-            list($x, $y) = [$y, $x];
+            [$x, $y] = [$y, $x];
         }
 
         $targetX = $this->x + $x;
@@ -234,4 +234,23 @@ SVG;
         return $this;
     }
 
+    public function circle(int $x, int $y, int $r): PlotBuilder
+    {
+        // TODO: Implement circle() method.
+    }
+
+    public function arc(int $x, int $y, int $d): PlotBuilder
+    {
+        $this->pushInstruction('path', );
+    }
+
+    public function ellipse(int $x, int $y, int $x1, int $y1, int $x2, int $y2): PlotBuilder
+    {
+        // TODO: Implement ellipse() method.
+    }
+
+    public function curve(int $x, int $y, int $x1, int $y1, ...$points): PlotBuilder
+    {
+        // TODO: Implement curve() method.
+    }
 }
