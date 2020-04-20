@@ -28,10 +28,10 @@ class DmplBuilder implements PlotBuilder
     protected bool $flipAxes = false;
     protected string $measuringUnit = 'M';
 
-    const KISS_CUT = 50;
-    const FLEXCUT_PEN = 6;
     const REGULAR_PEN = 0;
-    const CUT_THROUGH = 100;
+    const KISS_CUT_PEN = 1;
+    const THROUGH_CUT_PEN = 5;
+    const FLEX_CUT_PEN = 6;
     const MEASURING_UNITS = [1, 2, 3, 4, 5, 'M'];
 
     /**
@@ -184,11 +184,11 @@ class DmplBuilder implements PlotBuilder
     }
 
     /**
-     * Changes the plotter pen to use flexcut.
+     * Changes the plotter pen to use flex cut (perforated).
      */
     public function flexCut(): PlotBuilder
     {
-        return $this->changePen(self::FLEXCUT_PEN);
+        return $this->changePen(self::FLEX_CUT_PEN);
     }
 
     /**
@@ -197,6 +197,16 @@ class DmplBuilder implements PlotBuilder
     public function regularCut(): PlotBuilder
     {
         return $this->changePen(self::REGULAR_PEN);
+    }
+
+    public function throughCut(): PlotBuilder
+    {
+        return $this->changePen(self::THROUGH_CUT_PEN);
+    }
+
+    public function kissCut(): PlotBuilder
+    {
+        return $this->changePen(self::KISS_CUT_PEN);
     }
 
     /**
