@@ -31,6 +31,8 @@ class SvgBuilder implements PlotBuilder
 
     const TOOLS = [
         0 => 'regular',
+        1 => 'kiss',
+        5 => 'through',
         6 => 'flex',
     ];
 
@@ -90,15 +92,30 @@ class SvgBuilder implements PlotBuilder
 <svg xmlns="http://www.w3.org/2000/svg" width="{$width}" height="{$height}" viewBox="0 0 {$this->maxX} {$this->maxY}">
     <defs>
         <style>
-            line.regular {
+            .regular {
                 stroke: rgb(0,0,255);
                 stroke-width: 4;
             }
 
-            line.flex {
+            .kiss {
+                stroke: rgb(0,0,255);
+                stroke-width: 4;
+                stroke-dasharray: 20 4;                
+            }
+
+            .flex {
                 stroke: rgb(255,0,0);
                 stroke-width: 4;
                 stroke-dasharray: 20 4;
+            }
+            
+            .through {
+                stroke: rgb(255,0,0);
+                stroke-width: 4;
+            }
+            
+            path {
+                fill: none;
             }
         </style>
     </defs>
@@ -143,6 +160,16 @@ SVG;
     public function flexCut(): PlotBuilder
     {
         return $this->changePen(6);
+    }
+
+    public function throughCut(): PlotBuilder
+    {
+        return $this->changePen(5);
+    }
+
+    public function kissCut(): PlotBuilder
+    {
+        return $this->changePen(1);
     }
 
     /**
@@ -239,9 +266,36 @@ SVG;
         // TODO: Implement circle() method.
     }
 
-    public function arc(int $x, int $y, int $d): PlotBuilder
+    /**
+     * Adds a circle arc.
+     * (x,y) specified the center of the circle (relative to current position) which contains the arc.
+     * d specifies the size of the arc in degrees between -360 to +360.
+     * + causes counterclockwise movement, and - causes clockwise movement.
+     */
+    public function arc(int $dx, int $dy, int $degrees): PlotBuilder
     {
-        $this->pushInstruction('path', );
+        $radius = sqrt($dx ** 2 + $dy ** 2);
+
+        // FIXME: Not correctly implemented, but gives visually correct results for angles > 180°
+        $degrees += 180;
+
+        $endX = $dx + ($radius * cos($degrees * M_PI / 180));
+        $endY = $dy + ($radius * sin($degrees * M_PI / 180));
+
+        $this->maxX = max($this->maxX, $this->x + $dx + $radius);
+        $this->maxY = max($this->maxY, $this->y + $dy + $radius);
+
+        $largeArc = 1;
+        $sweep = $degrees < 0 ? 0 : 1;
+
+        $description = implode(' ', [
+            "M", $this->x, $this->y,
+            "a", $radius, $radius, 0, $largeArc, $sweep, $endX, $endY,
+        ]);
+
+        $this->pushInstruction('path', ['d' => $description, 'class' => $this->tool]);
+
+        return $this;
     }
 
     public function ellipse(int $x, int $y, int $x1, int $y1, int $x2, int $y2): PlotBuilder
@@ -253,4 +307,5 @@ SVG;
     {
         // TODO: Implement curve() method.
     }
+
 }
