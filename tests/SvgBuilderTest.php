@@ -3,8 +3,9 @@
 namespace Nielsiano\DmplBuilder\Tests;
 
 use Nielsiano\DmplBuilder\SvgBuilder;
+use PHPUnit\Framework\TestCase;
 
-class SvgBuilderTest extends \PHPUnit_Framework_TestCase
+class SvgBuilderTest extends TestCase
 {
 
     /**
@@ -12,7 +13,7 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
      */
     protected $builder;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->builder = new SvgBuilder();
     }
@@ -22,7 +23,7 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder
             ->plot(100, 200);
 
-        $this->assertContains('<line x1="0" y1="0" x2="100" y2="200" class="regular" />',
+        $this->assertStringContainsString('<line x1="0" y1="0" x2="100" y2="200" class="regular" />',
             $this->builder->compile());
     }
 
@@ -32,7 +33,7 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
             ->flipAxes()
             ->plot(100, 200);
 
-        $this->assertContains('<line x1="0" y1="0" x2="200" y2="100" class="regular" />',
+        $this->assertStringContainsString('<line x1="0" y1="0" x2="200" y2="100" class="regular" />',
             $this->builder->compile());
     }
 
@@ -41,7 +42,7 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
         $this->builder
             ->penUp()
             ->plot(100, 200);
-        $this->assertNotContains('<line ', $this->builder->compile());
+        $this->assertStringNotContainsString('<line ', $this->builder->compile());
     }
 
     public function test_it_can_select_flex_cut()
@@ -50,7 +51,7 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
             ->flexCut()
             ->plot(100, 200);
 
-        $this->assertContains('<line x1="0" y1="0" x2="100" y2="200" class="flex" />',
+        $this->assertStringContainsString('<line x1="0" y1="0" x2="100" y2="200" class="flex" />',
             $this->builder->compile());
     }
 
@@ -60,13 +61,13 @@ class SvgBuilderTest extends \PHPUnit_Framework_TestCase
             ->setMeasuringUnit('M')
             ->plot(100, 200);
 
-        $this->assertContains('<svg xmlns="http://www.w3.org/2000/svg" width="10mm" height="20mm"',
+        $this->assertStringContainsString('<svg xmlns="http://www.w3.org/2000/svg" width="10mm" height="20mm"',
             $this->builder->compile());
 
         $this->builder
             ->plot(50, 50);
 
-        $this->assertContains('<svg xmlns="http://www.w3.org/2000/svg" width="15mm" height="25mm"',
+        $this->assertStringContainsString('<svg xmlns="http://www.w3.org/2000/svg" width="15mm" height="25mm"',
             $this->builder->compile());
     }
 
